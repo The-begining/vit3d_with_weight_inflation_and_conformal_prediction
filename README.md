@@ -38,7 +38,7 @@ README.md
 ```bash
 # Clone the repository
 git clone https://github.com/The-begining/vit3d_with_weight_inflation_and_conformal_prediction.git
-cd eeg_vit_dino
+cd vit3d_with_weight_inflation_and_conformal_prediction
 
 # Create virtual environment
 python -m venv venv
