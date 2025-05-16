@@ -6,110 +6,111 @@ This project implements a deep learning pipeline for classifying EEG signals usi
 
 Electroencephalogram (EEG) data is inherently spatiotemporal. This project repurposes state-of-the-art vision transformer backbones to classify dementia-relevant EEG patterns. The architecture integrates:
 
-- A 3D Vision Transformer (ViT3D) with patch embedding inflation.
-- DINO (self-supervised) pretrained ViT weights.
-- Conformal prediction for confidence-calibrated decision-making.
+- A 3D Vision Transformer (ViT3D) with patch embedding inflation  
+- DINO (self-supervised) pretrained ViT weights  
+- Conformal prediction for confidence-calibrated decision-making  
 
 ## 📁 Directory Structure
 
+```
 src/
-├── dataset_with_aug.py # EEG dataset loader with data augmentation
-├── dino3d.py # Vision Transformer backbone adapted for 3D inputs
-├── model.py # LightningModule wrapper for training and evaluation
-├── preprocessing.py # EEG preprocessing utilities
-├── simply_dataset.py # Minimal EEG dataset loader (no augmentation)
-├── train.py # Training entry script using PyTorch Lightning
-├── utils.py # Helper functions (e.g., metrics, logging)
-LICENSE
-README.md
-
+├── dataset_with_aug.py     # EEG dataset loader with data augmentation  
+├── dino3d.py               # Vision Transformer backbone adapted for 3D inputs  
+├── model.py                # LightningModule wrapper for training and evaluation  
+├── preprocessing.py        # EEG preprocessing utilities  
+├── simply_dataset.py       # Minimal EEG dataset loader (no augmentation)  
+├── train.py                # Training entry script using PyTorch Lightning  
+├── utils.py                # Helper functions (e.g., metrics, logging)  
+LICENSE  
+README.md  
+```
 
 ## 🧩 Features
 
-- ✅ Inflated 2D ViT weights (from DINO) to 3D for spatiotemporal EEG data
-- ✅ Modular Lightning-based training pipeline
-- ✅ EEG-specific data augmentations (SmoothTimeMask, BandstopFilter)
-- ✅ CLS token-based classification with optional age embedding
-- ✅ Split-conformal prediction for uncertainty estimation
+- ✅ Inflated 2D ViT weights (from DINO) to 3D for spatiotemporal EEG data  
+- ✅ Modular Lightning-based training pipeline  
+- ✅ EEG-specific data augmentations (SmoothTimeMask, BandstopFilter)  
+- ✅ CLS token-based classification with optional age embedding  
+- ✅ Split-conformal prediction for uncertainty estimation  
 
 ## 🛠️ Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/eeg_vit_dino.git
+git clone https://github.com/The-begining/vit3d_with_weight_inflation_and_conformal_prediction.git
 cd eeg_vit_dino
 
-# Create environment
+# Create virtual environment
 python -m venv venv
 source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
+```
 
-Note: This project uses PyTorch Lightning, NumPy, SciPy, and Matplotlib. GPU acceleration (CUDA) is recommended for training.
-📊 Dataset
-EEG .npy files are expected to follow the structure:
+> **Note**: This project uses PyTorch Lightning, NumPy, SciPy, and Matplotlib. GPU acceleration (CUDA) is recommended for training.
 
-Shape: (Channels, Electrodes, Timesteps) = (160, 19, 500)
+## 📊 Dataset
 
-Directory structure:
+EEG `.npy` files are expected to follow the shape:  
+`(238, 19, 400)`
+Expected directory structure:
 
-bash
-Copy
-Edit
+```
 /data/
-  ├── train/
-  ├── val/
-  └── test/
-Each subdirectory should contain EEG arrays and a corresponding participants.tsv file for metadata (e.g., age, labels).
+├── train/
+├── val/
+└── test/
+```
 
-🚀 Training
-Modify training hyperparameters in train.py as needed.
+Each subdirectory should contain EEG arrays and a corresponding `participants.tsv` file for metadata (e.g., age, labels).
 
-bash
-Copy
-Edit
+## 🚀 Training
+
+Modify training hyperparameters in `train.py` as needed.
+
+```bash
 python src/train.py --data_dir /path/to/data --epochs 100 --batch_size 4
-Key Arguments:
---data_dir: Path to EEG dataset
+```
 
---pretrained: Use DINO weights (True/False)
+### Key Arguments:
 
---freeze_backbone: Whether to freeze ViT backbone
+- `--data_dir`: Path to EEG dataset  
+- `--pretrained`: Use DINO weights (`True` or `False`)  
+- `--freeze_backbone`: Whether to freeze ViT backbone  
+- `--lr`: Learning rate  
+- `--use_age`: Include age embeddings in the classifier  
 
---lr: Learning rate
+## 📈 Evaluation
 
---use_age: Include age embeddings in the classifier
+Validation accuracy, loss, and calibration metrics are logged during training.  
+Use `plot_logs()` from `utils.py` to visualize training curves and performance over epochs.
 
-📈 Evaluation
-Validation accuracy, loss, and calibration metrics are logged during training. Final classification metrics and conformal prediction coverage are available in the logs.
+## 📉 Uncertainty Estimation
 
-Use plot_logs() from utils.py to visualize training dynamics.
+This project integrates **split-conformal prediction** to compute per-sample confidence sets. Calibration ensures nominal coverage (e.g., 90%) while maintaining discriminative power.
 
-📉 Uncertainty Estimation
-This project integrates split-conformal prediction to compute per-sample confidence sets. Calibration ensures nominal coverage (e.g., 90%) while maintaining discriminative power.
+Outputs include:
 
-Uncertainty-related outputs include:
+- Prediction sets  
+- Empirical coverage  
+- Margin-based false negative control  
 
-Prediction sets
+## 🧪 Augmentation Techniques
 
-Empirical coverage
+Implemented in `dataset_with_aug.py`:
 
-False negative control via margin-based thresholds
-
-🧪 Augmentation Techniques
-Implemented in dataset_with_aug.py, including:
-
-SmoothTimeMask: Smooth temporal dropout
-
-BandstopFilter: Simulates sensor noise by filtering frequency bands
+- **SmoothTimeMask** – Smooth temporal dropout  
+- **BandstopFilter** – Simulates sensor noise by filtering frequency bands  
 
 Augmentations are applied probabilistically during training.
 
-🤝 Contributions
-This research is part of an academic thesis exploring uncertainty quantification in EEG-based dementia detection using vision transformers.
+## 🤝 Contributions
+
+This project is part of an academic thesis exploring uncertainty quantification in EEG-based dementia detection using Vision Transformers.
 
 Feel free to fork, raise issues, or contribute enhancements.
 
-📄 License
-This project is licensed under the terms of the MIT License.
+## 📄 License
+
+This project is licensed under the terms of the [MIT License](./LICENSE).
